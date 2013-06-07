@@ -48,12 +48,12 @@ if( !class_exists('gf_force_ssl')){
 		function init(){
 			if( is_admin() ){
 				// add settings page into Gravity Forms > Settings
-				GFForms::add_settings_page( __('Force SSL', 'gf-force-ssl'), array( $this, 'settings_page' ) );
+				GFForms::add_settings_page( __('Force SSL', 'gf-force-ssl'), array( $this, 'plugin_settings_page' ) );
 			}
 		}
 
-		function settings_page(){
-			include $this->path . '/settings.php';
+		function plugin_settings_page(){
+			include $this->path . '/plugin-settings.php';
 		}
 
 		public static function lazy_loader( $class_name ) {
