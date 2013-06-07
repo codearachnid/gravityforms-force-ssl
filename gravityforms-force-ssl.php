@@ -8,7 +8,7 @@
  * Author: Timothy Wood (@codearachnid)
  * Author URI: http://www.codearachnid.com
  * Author Email: tim@imaginesimplicity.com
- * Text Domain: 'gf-force-ssl' 
+ * Text Domain: 'gf-force-ssl'
  * License:
  * 
  *     Copyright 2013 Imagine Simplicity (tim@imaginesimplicity.com)
@@ -18,7 +18,6 @@
  * @author codearachnid
  * 
  */
-
 
 if ( !defined( 'ABSPATH' ) )
 	die( '-1' );
@@ -43,6 +42,18 @@ if( !class_exists('gf_force_ssl')){
 			$this->dir = trailingslashit( basename( $this->path ) );
 			$this->url = plugins_url() . '/' . $this->dir;
 
+			add_action( 'init', array( $this, 'init') );
+		}
+
+		function init(){
+			if( is_admin() ){
+				// add settings page into Gravity Forms > Settings
+				GFForms::add_settings_page( __('Force SSL', 'gf-force-ssl'), array( $this, 'settings_page' ) );
+			}
+		}
+
+		function settings_page(){
+			include $this->path . '/settings.php';
 		}
 
 		public static function lazy_loader( $class_name ) {
@@ -67,6 +78,7 @@ if( !class_exists('gf_force_ssl')){
 		public static function prerequisites() {;
 			$pass = TRUE;
 			$pass = $pass && version_compare( get_bloginfo( 'version' ), self::MIN_WP_VERSION, '>=' );
+			$pass = $pass && class_exists('RGForms') && class_exists('RGFormsModel');
 			return $pass;
 		}
 
