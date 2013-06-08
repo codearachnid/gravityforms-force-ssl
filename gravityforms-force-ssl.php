@@ -43,7 +43,7 @@ if ( !class_exists( 'gf_force_ssl' ) ) {
 			$this->url = plugins_url() . '/' . $this->dir;
 
 			add_action( 'init', array( $this, 'init' ) );
-			add_filter( 'gform_shortcode_form', array( $this, 'shortcode_form' ), 10, 3 );
+			add_action( 'the_posts', array( $this, 'check_for_shortcode' ) );
 			add_filter( 'gform_form_settings', array( $this, 'form_settings' ), 10, 2 );
 			add_filter( 'gform_pre_form_settings_save', array( $this, 'form_settings_save' ) );
 		}
@@ -55,26 +55,34 @@ if ( !class_exists( 'gf_force_ssl' ) ) {
 			}
 		}
 
-		function shortcode_form( $shortcode, $attributes, $content ){
-			if( !is_ssl() && $this->check_force( $attributes['id'] ) )
-				$this->force_ssl();
-			return $shortcode;
+		function check_for_shortcode( $posts ){
+			$pattern = get_shortcode_regex();
+			foreach( $posts as $post ){
+				$check = preg_match_all( '/'. $pattern .'/s', $post->post_content, $matches ) && array_key_exists( 2, $matches ) && in_array( 'gravityform', $matches[2] );
+				$check_alt = preg_match_all( '/'. $pattern .'/s', $post->post_content, $matches ) && array_key_exists( 2, $matches ) && in_array( 'gravityforms', $matches[2] );
+				if( !empty($matches[3]) ) {
+					$attributes = shortcode_parse_atts( trim( $matches[3][0]) );
+					if( !is_ssl() && $this->check_force( $attributes['id'] ) )
+						$this->force_ssl( $post->ID );
+				}
+			}
+			return $posts;
 		}
 
 		function check_force( $id ){
 			$form_meta = GFFormsModel::get_form_meta_by_id( $id );
-			
+
 			if( !empty( $form_meta[0][ 'force_ssl' ] ) )
 				return $form_meta[0][ 'force_ssl' ];
 
 			return false;
 		}
 
-		function force_ssl(){
-			$goto_id = get_the_ID();
-			$goto = str_replace( 'http://', 'https://', get_permalink( $goto_id ) );
-			// wp_redirect( $goto, 301 );
-			// exit;
+		function force_ssl( $post_id = null ){
+			$post_id = empty( $post_id ) ? get_the_ID() : $post_id;
+			$goto = str_replace( 'http://', 'https://', get_permalink( $post_id ) );
+			wp_redirect( $goto, 301 );
+			exit;
 		}
 
 		function form_settings( $settings, $form ) {
