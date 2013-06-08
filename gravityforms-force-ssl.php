@@ -10,19 +10,19 @@
  * Author Email: tim@imaginesimplicity.com
  * Text Domain: 'gf-force-ssl'
  * License:
- * 
+ *
  *     Copyright 2013 Imagine Simplicity (tim@imaginesimplicity.com)
  *     License: GNU General Public License v3.0
  *     License URI: http://www.gnu.org/licenses/gpl-3.0.html
- * 
+ *
  * @author codearachnid
- * 
+ *
  */
 
 if ( !defined( 'ABSPATH' ) )
 	die( '-1' );
 
-if( !class_exists('gf_force_ssl')){
+if ( !class_exists( 'gf_force_ssl' ) ) {
 	class gf_force_ssl {
 
 		private static $_this;
@@ -42,17 +42,33 @@ if( !class_exists('gf_force_ssl')){
 			$this->dir = trailingslashit( basename( $this->path ) );
 			$this->url = plugins_url() . '/' . $this->dir;
 
-			add_action( 'init', array( $this, 'init') );
+			add_action( 'init', array( $this, 'init' ) );
+			add_filter( 'gform_form_settings', array( $this, 'my_custom_form_setting' ), 10, 2 );
+			add_filter ( 'gform_pre_form_settings_save', array( $this, 'save_my_custom_form_setting' ) );
 		}
 
-		function init(){
-			if( is_admin() ){
+		function init() {
+			if ( is_admin() ) {
 				// add settings page into Gravity Forms > Settings
-				GFForms::add_settings_page( __('Force SSL', 'gf-force-ssl'), array( $this, 'plugin_settings_page' ) );
+				GFForms::add_settings_page( __( 'Force SSL', 'gf-force-ssl' ), array( $this, 'plugin_settings_page' ) );
 			}
 		}
 
-		function plugin_settings_page(){
+		function my_custom_form_setting( $settings, $form ) {
+			ob_start();
+			
+			// include the fields for form settings
+			include $this->path . '/form-settings.php';
+
+			$settings['Restrictions']['force_ssl'] = ob_get_clean();
+			return $settings;
+		}
+		function save_my_custom_form_setting( $form ) {
+			$form['gf_force_ssl'] = rgpost( 'gf_force_ssl' );
+			return $form;
+		}
+
+		function plugin_settings_page() {
 			include $this->path . '/plugin-settings.php';
 		}
 
@@ -70,15 +86,15 @@ if( !class_exists('gf_force_ssl')){
 		}
 
 		/**
-		* Check the minimum WP version
-		*
-		* @static
-		* @return bool Whether the test passed
-		*/
+		 * Check the minimum WP version
+		 *
+		 * @static
+		 * @return bool Whether the test passed
+		 */
 		public static function prerequisites() {;
 			$pass = TRUE;
 			$pass = $pass && version_compare( get_bloginfo( 'version' ), self::MIN_WP_VERSION, '>=' );
-			$pass = $pass && class_exists('RGForms') && class_exists('RGFormsModel');
+			$pass = $pass && class_exists( 'RGForms' ) && class_exists( 'RGFormsModel' );
 			return $pass;
 		}
 
@@ -89,15 +105,15 @@ if( !class_exists('gf_force_ssl')){
 		 * @return void
 		 */
 		public static function fail_notices() {
-			printf( '<div class="error"><p>%s</p></div>', 
-				sprintf( __( 'Gravity Forms: Force SSL requires WordPress v%s or higher.', 'wp-plugin-framework' ), 
-					self::MIN_WP_VERSION 
-				));
+			printf( '<div class="error"><p>%s</p></div>',
+				sprintf( __( 'Gravity Forms: Force SSL requires WordPress v%s or higher.', 'wp-plugin-framework' ),
+					self::MIN_WP_VERSION
+				) );
 		}
 
 		/**
 		 * Static Singleton Factory Method
-		 * 
+		 *
 		 * @return static $_this instance
 		 * @readlink http://eamann.com/tech/the-case-for-singletons/
 		 */
