@@ -43,8 +43,9 @@ if ( !class_exists( 'gf_force_ssl' ) ) {
 			$this->url = plugins_url() . '/' . $this->dir;
 
 			add_action( 'init', array( $this, 'init' ) );
-			add_filter( 'gform_form_settings', array( $this, 'my_custom_form_setting' ), 10, 2 );
-			add_filter ( 'gform_pre_form_settings_save', array( $this, 'save_my_custom_form_setting' ) );
+			add_filter( 'gform_shortcode_form', array( $this, 'shortcode_form' ), 10, 3 );
+			add_filter( 'gform_form_settings', array( $this, 'form_settings' ), 10, 2 );
+			add_filter( 'gform_pre_form_settings_save', array( $this, 'form_settings_save' ) );
 		}
 
 		function init() {
@@ -54,17 +55,39 @@ if ( !class_exists( 'gf_force_ssl' ) ) {
 			}
 		}
 
-		function my_custom_form_setting( $settings, $form ) {
-			ob_start();
+		function shortcode_form( $shortcode, $attributes, $content ){
+			if( !is_ssl() && $this->check_force( $attributes['id'] ) )
+				$this->force_ssl();
+			return $shortcode;
+		}
+
+		function check_force( $id ){
+			$form_meta = GFFormsModel::get_form_meta_by_id( $id );
 			
+			if( !empty( $form_meta[0][ 'force_ssl' ] ) )
+				return $form_meta[0][ 'force_ssl' ];
+
+			return false;
+		}
+
+		function force_ssl(){
+			$goto_id = get_the_ID();
+			$goto = str_replace( 'http://', 'https://', get_permalink( $goto_id ) );
+			// wp_redirect( $goto, 301 );
+			// exit;
+		}
+
+		function form_settings( $settings, $form ) {
+			ob_start();
+
 			// include the fields for form settings
 			include $this->path . '/form-settings.php';
 
 			$settings['Restrictions']['force_ssl'] = ob_get_clean();
 			return $settings;
 		}
-		function save_my_custom_form_setting( $form ) {
-			$form['gf_force_ssl'] = rgpost( 'gf_force_ssl' );
+		function form_settings_save( $form ) {
+			$form['force_ssl'] = rgpost( 'force_ssl' );
 			return $form;
 		}
 
