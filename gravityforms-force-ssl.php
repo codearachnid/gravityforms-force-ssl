@@ -26,21 +26,12 @@ if ( !class_exists( 'gf_force_ssl' ) ) {
 	class gf_force_ssl {
 
 		private static $_this;
-
-		public $dir;
 		public $path;
-		public $url;
-
 		const MIN_WP_VERSION = '3.5';
 
 		function __construct() {
 
-			// register lazy autoloading
-			spl_autoload_register( 'self::lazy_loader' );
-
-			$this->path = self::get_plugin_path();
-			$this->dir = trailingslashit( basename( $this->path ) );
-			$this->url = plugins_url() . '/' . $this->dir;
+			$this->path = trailingslashit( dirname( __FILE__ ) );
 
 			add_action( 'init', array( $this, 'init' ) );
 			add_action( 'the_posts', array( $this, 'check_for_shortcode' ) );
@@ -101,19 +92,6 @@ if ( !class_exists( 'gf_force_ssl' ) ) {
 
 		function plugin_settings_page() {
 			include $this->path . '/plugin-settings.php';
-		}
-
-		public static function lazy_loader( $class_name ) {
-
-			$file = self::get_plugin_path() . 'classes/' . $class_name . '.php';
-
-			if ( file_exists( $file ) )
-				require_once $file;
-
-		}
-
-		public static function get_plugin_path() {
-			return trailingslashit( dirname( __FILE__ ) );
 		}
 
 		/**
