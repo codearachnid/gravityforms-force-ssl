@@ -53,7 +53,7 @@ if ( !class_exists( 'gf_force_ssl' ) ) {
 				$check_alt = preg_match_all( '/'. $pattern .'/s', $post->post_content, $matches ) && array_key_exists( 2, $matches ) && in_array( 'gravityforms', $matches[2] );
 				if( !empty($matches[3]) ) {
 					$attributes = shortcode_parse_atts( trim( $matches[3][0]) );
-					if( !is_ssl() && $this->check_force( $attributes['id'] ) )
+					if( !empty($attributes['id']) && !is_ssl() && $this->check_force( $attributes['id'] ) )
 						$this->force_ssl( $post->ID );
 				}
 			}
@@ -72,6 +72,9 @@ if ( !class_exists( 'gf_force_ssl' ) ) {
 		function force_ssl( $post_id = null ){
 			$post_id = empty( $post_id ) ? get_the_ID() : $post_id;
 			$goto = str_replace( 'http://', 'https://', get_permalink( $post_id ) );
+			if( !empty( $_GET ) ) {
+				$goto .= '?' . http_build_query($_GET);
+			}
 			wp_redirect( $goto, 301 );
 			exit;
 		}
