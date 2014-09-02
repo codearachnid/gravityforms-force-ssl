@@ -3,6 +3,7 @@ Contributors: codearachnid
 Tags: forms, gravityforms, SSL, secure,security,redirect,
 Requires at least: 3.7 or higher
 Tested up to: 3.9.2
+Stable tag: 1.2.0
 License: GPL v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
