@@ -61,6 +61,10 @@ if ( !class_exists( 'gf_force_ssl' ) ) {
 		}
 
 		function check_force( $id ){
+			
+			if( get_option( 'gform_force_ssl_all' ) == '1' )
+				return true;
+
 			$form_meta = GFFormsModel::get_form_meta_by_id( $id );
 
 			if( !empty( $form_meta[0][ 'force_ssl' ] ) )
@@ -94,6 +98,13 @@ if ( !class_exists( 'gf_force_ssl' ) ) {
 		}
 
 		function plugin_settings_page() {
+
+			if ( ! empty( $_POST ) && check_admin_referer( 'gforms_update_force_ssl', 'gforms_update_force_ssl' ) ) {
+			   update_option("gform_force_ssl_all", rgpost("force_ssl_all"));
+			}
+
+			$form['force_ssl_all'] = get_option( 'gform_force_ssl_all' );
+
 			include $this->path . '/plugin-settings.php';
 		}
 
