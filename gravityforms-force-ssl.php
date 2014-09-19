@@ -74,6 +74,9 @@ if ( !class_exists( 'gf_force_ssl' ) ) {
 		}
 
 		function force_ssl( $post_id = null ){
+			if( is_admin() )
+				return;
+			
 			$post_id = empty( $post_id ) ? get_the_ID() : $post_id;
 			$goto = str_replace( 'http://', 'https://', get_permalink( $post_id ) );
 			if( !empty( $_GET ) ) {
