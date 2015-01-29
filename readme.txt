@@ -12,7 +12,7 @@ An addon to Gravity Forms to add an option to force your forms to be loaded SSL 
 == Description ==
 An addon to Gravity Forms to add an option to force your forms to be loaded SSL only.
 
-This plugin requires Gravity Forms 1.8+ and is tested through WordPress 4.1
+This plugin requires Gravity Forms 1.9+ and is tested through WordPress 4.1
 
 Thanks to the following users for making the plugin better!
 * @limecanvas
@@ -42,7 +42,7 @@ Just go to each form settings\' page to enable the SSL functionality.
 1. Enable SSL on form settings
 
 == Changelog ==
-= 1.4.0 = 
+= 1.4.0 =
 * Confirmed compatibility with Gravity Forms and WordPress 4.1
 * Updated icon, banner, and readme
 
