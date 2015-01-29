@@ -3,16 +3,16 @@ Contributors: codearachnid
 Tags: forms, gravityforms, SSL, secure,security,redirect,
 Requires at least: 3.7 or higher
 Tested up to: 4.1
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 License: GPL v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 An addon to Gravity Forms to add an option to force your forms to be loaded SSL only.
 
 == Description ==
-An addon to Gravity Forms to add an option to force your forms to be loaded SSL only.
+An addon to Gravity Forms to add an option to force your forms to be loaded SSL only. Fully supporting the latest version of Gravity Forms 1.9!
 
-This plugin requires Gravity Forms 1.9+ and is tested through WordPress 4.1
+This plugin requires Gravity Forms 1.7+ and is tested through WordPress 4.1.
 
 Thanks to the following users for making the plugin better!
 * @limecanvas

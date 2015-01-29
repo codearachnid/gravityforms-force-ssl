@@ -4,7 +4,7 @@
  * Plugin Name: Gravity Forms: Force SSL
  * Plugin URI:
  * Description: An addon to Gravity Forms to add an option to force your forms to be loaded SSL only.
- * Version: 1.4.0
+ * Version: 1.4.1
  * Author: Timothy Wood (@codearachnid)
  * Author URI: http://www.codearachnid.com
  * Author Email: tim@imaginesimplicity.com
@@ -61,7 +61,7 @@ if ( !class_exists( 'gf_force_ssl' ) ) {
 		}
 
 		function check_force( $id ){
-			
+
 			if( get_option( 'gform_force_ssl_all' ) == '1' )
 				return true;
 
@@ -76,7 +76,7 @@ if ( !class_exists( 'gf_force_ssl' ) ) {
 		function force_ssl( $post_id = null ){
 			if( is_admin() )
 				return;
-			
+
 			$post_id = empty( $post_id ) ? get_the_ID() : $post_id;
 			$goto = str_replace( 'http://', 'https://', get_permalink( $post_id ) );
 			if( !empty( $_GET ) ) {
